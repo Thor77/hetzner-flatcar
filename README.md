@@ -11,6 +11,9 @@ Includes transpiling of [Container Linux Config](https://www.flatcar.org/docs/la
 * download flatcar-install script into cwd `wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install`
 * `./hetzner-flatcar hostname
 
+This tool will establish a SSH session to the rescue os to run the flatcar-install script using [goph](https://github.com/melbahja/goph).
+For authentication it uses the SSH agent, so ensure the private counterpart to the public key uploaded to Hetzner and referenced in the config is added to your SSH agent.
+
 ## Configuration
 ```toml
 [hcloud]
@@ -35,6 +38,8 @@ The [Container Linux Config](https://github.com/flatcar-linux/container-linux-co
 * `Static` - static data from [config](#configuration) option `flatcar.template_static` as `map[string]string`
 
 Afterwards it's transpiled into a Ignition file.
+
+Take a look at the [example config](doc/example.yml.gtpl) for a minimal example just creating a `core` user with the SSH Key used for rescue boot and setting the hostname to the maschine name.
 
 ## Deployment procedure
 1. check whether vm with the name given as first parameter already exists
