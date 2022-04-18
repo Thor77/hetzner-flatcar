@@ -1,6 +1,6 @@
 # hetzner-flatcar
 A tool to deploy [Flatcar Linux](https://flatcar.og) on Hetzner Cloud.
-Includes transpiling of Container Linux Config and reinstalling maschines on changes.
+Includes transpiling of [Container Linux Config](https://www.flatcar.org/docs/latest/provisioning/cl-config/) and reinstalling maschines on changes.
 
 ## Build
 `go build .`
@@ -12,7 +12,7 @@ Includes transpiling of Container Linux Config and reinstalling maschines on cha
 * `./hetzner-flatcar hostname
 
 ## Configuration
-```
+```toml
 [hcloud]
 token = "<hetzner cloud token>"
 server_type = "cx11"
@@ -39,8 +39,9 @@ Afterwards it's transpiled into a Ignition file.
 ## Deployment procedure
 1. check whether vm with the name given as first parameter already exists
 2. create VM (if not already exists)
-3. render ignition template with data from new or existing VM
-4. enable rescue boot on VM
-5. Startup or reboot VM (into rescue)
-6. upload flatcar-install script and rendered ignition config
-7. call flatcar-install and reboot
+3. render container linux config template with data from new or existing VM
+4. transpile container linux config into ignition file
+5. enable rescue boot on VM
+6. Startup or reboot VM (into rescue)
+7. upload flatcar-install script and rendered ignition config
+8. call flatcar-install and reboot
