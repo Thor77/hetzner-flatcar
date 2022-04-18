@@ -1,6 +1,6 @@
 # hetzner-flatcar
 A tool to deploy [Flatcar Linux](https://flatcar.og) on Hetzner Cloud.
-Includes rendering of Ignition templates and reinstalling maschines on changes.
+Includes transpiling of Container Linux Config and reinstalling maschines on changes.
 
 ## Build
 `go build .`
@@ -29,10 +29,12 @@ consul_version = "1.11.4"
 ```
 
 ## Template
-The container linux config template is rendered using [text/template](https://golang.org/pkg/text/template/) and is given this data:
+The [Container Linux Config](https://github.com/flatcar-linux/container-linux-config-transpiler/blob/flatcar-master/doc/configuration.md) template is rendered using [text/template](https://golang.org/pkg/text/template/) and is given this data:
 * `Server` - [Server](https://pkg.go.dev/github.com/hetznercloud/hcloud-go/hcloud#Server) object as returned by Hetzner Cloud API
 * `SSHKey` - [SSHKey](https://pkg.go.dev/github.com/hetznercloud/hcloud-go/hcloud#SSHKey) object of the SSH Key used for rescue boot
 * `Static` - static data from [config](#configuration) option `flatcar.template_static` as `map[string]string`
+
+Afterwards it's transpiled into a Ignition file.
 
 ## Deployment procedure
 1. check whether vm with the name given as first parameter already exists
