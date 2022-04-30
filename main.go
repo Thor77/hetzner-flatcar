@@ -12,6 +12,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 
@@ -66,9 +67,11 @@ func waitForAction(actionClient hcloud.ActionClient, action *hcloud.Action) erro
 }
 
 type templateData struct {
-	Server hcloud.Server
-	SSHKey hcloud.SSHKey
-	Static map[string]string
+	Server   hcloud.Server
+	SSHKey   hcloud.SSHKey
+	Static   map[string]string
+	ReadFile func(string) (string, error)
+	Indent   func(int, string) string
 }
 
 func main() {
@@ -204,6 +207,19 @@ func main() {
 		Server: *server,
 		SSHKey: *sshKey,
 		Static: cfg.Flatcar.TemplateStatic,
+		ReadFile: func(filename string) (string, error) {
+			content, err := ioutil.ReadFile(filename)
+			return string(content), err
+		},
+		Indent: func(indent int, input string) string {
+			lines := strings.Split(input, "\n")
+			output := make([]string, len(lines))
+			indentString := strings.Repeat(" ", indent)
+			for i := 0; i < len(output); i++ {
+				output[i] = indentString + lines[i]
+			}
+			return strings.Join(output, "\n")
+		},
 	})
 	if err != nil {
 		log.Fatalf("error rendering template: %v\n", err)
