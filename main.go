@@ -20,6 +20,8 @@ import (
 	"github.com/melbahja/goph"
 )
 
+var installScriptSource = "https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install"
+
 func transpileConfig(input []byte) (string, error) {
 	cfg, pt, report := clconfig.Parse(input)
 	if report.IsFatal() {
@@ -301,12 +303,26 @@ func main() {
 	// Defer closing the network connection.
 	defer sshClient.Close()
 
-	// TODO: support different source for flatcar-install script
-	err = sshClient.Upload("flatcar-install", "/root/flatcar-install")
-	if err != nil {
-		log.Fatalf("error uploading flatcar-install script: %v\n", err)
+	installScriptTarget := "/root/flatcar-install"
+	ignitionTarget := "/root/ignition.json"
+
+	if cfg.Flatcar.InstallScript != "" {
+		err = sshClient.Upload(cfg.Flatcar.InstallScript, installScriptTarget)
+		if err != nil {
+			log.Fatalf("error uploading flatcar-install script: %v\n", err)
+		}
+	} else {
+		// download install script on remote maschine
+		cmd, err := sshClient.Command(fmt.Sprintf("curl -sS -o %s %s", installScriptTarget, installScriptSource))
+		if err != nil {
+			log.Fatalf("error creating cmd for install script download: %v\n", err)
+		}
+		err = cmd.Run()
+		if err != nil {
+			log.Fatalf("error downloading install script: %v\n", err)
+		}
 	}
-	err = sshClient.Upload(renderedPath, "/root/ignition.json")
+	err = sshClient.Upload(renderedPath, ignitionTarget)
 	if err != nil {
 		log.Fatalf("error uploading ignition file: %v\n", err)
 	}
@@ -315,8 +331,8 @@ func main() {
 	commands := []string{
 		"apt update",
 		"apt install -y gawk",
-		"chmod +x /root/flatcar-install",
-		fmt.Sprintf("/root/flatcar-install -s -i /root/ignition.json -V %s", cfg.Flatcar.Version),
+		fmt.Sprintf("chmod +x %s", installScriptTarget),
+		fmt.Sprintf("%s -s -i %s -V %s", installScriptTarget, ignitionTarget, cfg.Flatcar.Version),
 		"shutdown -r now",
 	}
 	for _, command := range commands {

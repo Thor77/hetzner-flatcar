@@ -8,8 +8,7 @@ Includes transpiling of [Container Linux Config](https://www.flatcar.org/docs/la
 ## Usage
 * create a config named `config.toml` with the values described in [configuration](#configuration).
 * create a container linux config template, see [template](#template) for details
-* download flatcar-install script into cwd `wget https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install`
-* `./hetzner-flatcar hostname
+* `./hetzner-flatcar hostname`
 
 This tool will establish a SSH session to the rescue os to run the flatcar-install script using [goph](https://github.com/melbahja/goph).
 For authentication it uses the SSH agent, so ensure the private counterpart to the public key uploaded to Hetzner and referenced in the config is added to your SSH agent.
@@ -26,6 +25,10 @@ private_network = "<private network server is attached to>"
 [flatcar]
 version = "3139.2.0"
 config_template = "ignition.yml.gtpl"
+# provide path to custom flatcar-install script
+# if not provided will be downloaded from
+# https://github.com/flatcar-linux/init/blob/flatcar-master/bin/flatcar-install
+# install_script = "custom-install-script"
 [flatcar.template_static]
 nomad_version = "1.2.6"
 consul_version = "1.11.4"
