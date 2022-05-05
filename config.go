@@ -7,12 +7,13 @@ import (
 )
 
 type hcloudConfig struct {
-	Token          string
-	SSHKey         string `toml:"ssh_key"`
-	PrivateNetwork string `toml:"private_network"`
-	ServerType     string `toml:"server_type"`
-	Datacenter     string
-	Image          string
+	Token             string
+	SSHKey            string `toml:"ssh_key"`
+	SSHKeyPrivatePath string `toml:"ssh_key_private_path"`
+	PrivateNetwork    string `toml:"private_network"`
+	ServerType        string `toml:"server_type"`
+	Datacenter        string
+	Image             string
 }
 
 type flatcarConfig struct {

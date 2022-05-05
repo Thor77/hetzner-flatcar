@@ -284,9 +284,14 @@ func main() {
 	log.Println("sleeping 30s to wait for server to (re)boot into rescue")
 	time.Sleep(30 * time.Second)
 
-	sshAuth, err := goph.UseAgent()
+	var sshAuth goph.Auth
+	if cfg.HCloud.SSHKeyPrivatePath != "" {
+		sshAuth, err = goph.Key(cfg.HCloud.SSHKeyPrivatePath, "")
+	} else {
+		sshAuth, err = goph.UseAgent()
+	}
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error building ssh authentication: %v\n", err)
 	}
 
 	initialRetries := 30
