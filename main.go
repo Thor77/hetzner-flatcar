@@ -118,8 +118,6 @@ func main() {
 		serverExists = false
 	}
 
-	serverTypeName := cfg.HCloud.ServerType
-	datacenterName := cfg.HCloud.Datacenter
 	if serverExists {
 		log.Printf("server '%s' (id %d) already exists, checking for necessary changes\n", serverName, server.ID)
 		// check if redeploy is necessary -- fetching user data afterwards not possible, maybe cache locally/connect to server?
@@ -150,7 +148,7 @@ func main() {
 		log.Printf("creating server '%s'", serverName)
 		// create server
 		startAfterCreate := false
-		serverType, _, err := client.ServerType.GetByName(context.Background(), serverTypeName)
+		serverType, _, err := client.ServerType.GetByName(context.Background(), cfg.HCloud.ServerType)
 		if err != nil {
 			log.Fatalf("error finding server type: %v\n", err)
 		}
@@ -158,13 +156,16 @@ func main() {
 		if err != nil {
 			log.Fatalf("error finding image: %v\n", err)
 		}
-		datacenter, _, err := client.Datacenter.GetByName(context.Background(), datacenterName)
+		location, _, err := client.Location.GetByName(context.Background(), cfg.HCloud.Location)
+		if err != nil {
+			log.Fatalf("error finding location: %v\n", err)
+		}
 		createOpts := hcloud.ServerCreateOpts{
 			Name:             serverName,
 			StartAfterCreate: &startAfterCreate,
 			ServerType:       serverType,
 			Image:            image,
-			Datacenter:       datacenter,
+			Location:         location,
 			SSHKeys:          []*hcloud.SSHKey{sshKey},
 			Networks:         []*hcloud.Network{privateNetwork},
 		}

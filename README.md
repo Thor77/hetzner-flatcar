@@ -18,7 +18,7 @@ For authentication it uses the SSH agent, so ensure the private counterpart to t
 [hcloud]
 token = "<hetzner cloud token>"
 server_type = "cx11"
-datacenter = "nbg1"
+location = "nbg1"
 ssh_key = "<name of ssh key used for rescue and passed to template>"
 private_network = "<private network server is attached to>"
 

@@ -12,7 +12,7 @@ type hcloudConfig struct {
 	SSHKeyPrivatePath string `toml:"ssh_key_private_path"`
 	PrivateNetwork    string `toml:"private_network"`
 	ServerType        string `toml:"server_type"`
-	Datacenter        string
+	Location          string
 	Image             string
 }
 
@@ -41,8 +41,8 @@ func verifyConfig(conf *config) error {
 	if conf.HCloud.ServerType == "" {
 		return errors.New("server type missing")
 	}
-	if conf.HCloud.Datacenter == "" {
-		return errors.New("datacenter missing")
+	if conf.HCloud.Location == "" {
+		return errors.New("location missing")
 	}
 	if conf.HCloud.Image == "" {
 		conf.HCloud.Image = "debian-11"
