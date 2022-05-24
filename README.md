@@ -62,6 +62,23 @@ storage:
 {{ call .ReadFile "LICENSE" | call .Indent 12 }}
 ```
 
+### Custom template command
+Instead of using the native go template, you can also use any other command (for example [Helm](https://helm.sh)).
+To do that provide your custom command in the configuration option `flatcar.template_command`.
+It will get passed the hostname as the first argument and `Server` and `SSHKey` in YAML format on stdin.
+```
+hetzner:
+  server:
+    name: ...
+  sshkey:
+    publickey: ...
+```
+Example script to render a helm template with a values file based on the hostname:
+```sh
+#!/bin/sh
+cat - common.yaml "${1}.yaml" | yq -y . | helm template ignition -f -
+```
+
 ## Deployment procedure
 1. check whether vm with the name given as first parameter already exists
 2. create VM (if not already exists)

@@ -11,6 +11,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -19,6 +20,7 @@ import (
 	clconfig "github.com/flatcar-linux/container-linux-config-transpiler/config"
 	"github.com/hetznercloud/hcloud-go/hcloud"
 	"github.com/melbahja/goph"
+	"gopkg.in/yaml.v3"
 )
 
 var installScriptSource = "https://raw.githubusercontent.com/flatcar-linux/init/flatcar-master/bin/flatcar-install"
@@ -72,6 +74,15 @@ type templateData struct {
 	Static   map[string]string
 	ReadFile func(string) (string, error)
 	Indent   func(int, string) string
+}
+
+type customTemplateDataHetzner struct {
+	Server hcloud.Server
+	SSHKey hcloud.SSHKey
+}
+
+type customTemplateData struct {
+	Hetzner customTemplateDataHetzner
 }
 
 func main() {
@@ -196,40 +207,61 @@ func main() {
 		}
 	}
 
-	// render container linux config template
-	// TODO: support name replacement in template path
-	ignitionTemplate := cfg.Flatcar.ConfigTemplate
-	buffer := &bytes.Buffer{}
-	tmpl, err := template.New(filepath.Base(ignitionTemplate)).ParseFiles(ignitionTemplate)
-	if err != nil {
-		log.Fatalf("error loading template: %v\n", err)
-	}
-	err = tmpl.Execute(buffer, templateData{
-		Server: *server,
-		SSHKey: *sshKey,
-		Static: cfg.Flatcar.TemplateStatic,
-		ReadFile: func(filename string) (string, error) {
-			content, err := ioutil.ReadFile(filename)
-			return string(content), err
-		},
-		Indent: func(indent int, input string) string {
-			lines := strings.Split(input, "\n")
-			output := make([]string, len(lines))
-			indentString := strings.Repeat(" ", indent)
-			for i := 0; i < len(output); i++ {
-				output[i] = indentString + lines[i]
-			}
-			return strings.Join(output, "\n")
-		},
-	})
-	if err != nil {
-		log.Fatalf("error rendering template: %v\n", err)
+	var templateContent []byte
+	if cfg.Flatcar.TemplateCommand == "" {
+		ignitionTemplate := cfg.Flatcar.ConfigTemplate
+		buffer := &bytes.Buffer{}
+		tmpl, err := template.New(filepath.Base(ignitionTemplate)).ParseFiles(ignitionTemplate)
+		if err != nil {
+			log.Fatalf("error loading template: %v\n", err)
+		}
+		err = tmpl.Execute(buffer, templateData{
+			Server: *server,
+			SSHKey: *sshKey,
+			Static: cfg.Flatcar.TemplateStatic,
+			ReadFile: func(filename string) (string, error) {
+				content, err := ioutil.ReadFile(filename)
+				return string(content), err
+			},
+			Indent: func(indent int, input string) string {
+				lines := strings.Split(input, "\n")
+				output := make([]string, len(lines))
+				indentString := strings.Repeat(" ", indent)
+				for i := 0; i < len(output); i++ {
+					output[i] = indentString + lines[i]
+				}
+				return strings.Join(output, "\n")
+			},
+		})
+		if err != nil {
+			log.Fatalf("error rendering template: %v\n", err)
+		}
+
+		templateContent, _ = ioutil.ReadAll(buffer)
+	} else {
+		// marshal template data for passing it to the custom command
+		templateData := customTemplateData{
+			Hetzner: customTemplateDataHetzner{
+				Server: *server,
+				SSHKey: *sshKey,
+			},
+		}
+		templateDataYAML, err := yaml.Marshal(templateData)
+		if err != nil {
+			log.Fatalf("error marshaling hcloud data to yaml: %v\n", err)
+		}
+
+		// execute custom template command
+		tmplCmd := exec.Command(cfg.Flatcar.TemplateCommand, server.Name)
+		tmplCmd.Stdin = bytes.NewReader(templateDataYAML)
+		templateContent, err = tmplCmd.Output()
+		if err != nil {
+			log.Println(string(err.(*exec.ExitError).Stderr))
+			log.Fatalf("error running template command: %v\n", err)
+		}
 	}
 
-	// transpile rendered container linux config template into ignition
-	bufferContent, _ := ioutil.ReadAll(buffer)
-
-	renderedPath, err := transpileConfig(bufferContent)
+	renderedPath, err := transpileConfig(templateContent)
 	if err != nil {
 		log.Fatalf("error transpiling config: %v\n", err)
 	}
