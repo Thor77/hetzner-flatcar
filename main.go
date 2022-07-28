@@ -386,7 +386,7 @@ func main() {
 		"apt update",
 		"apt install -y gawk",
 		fmt.Sprintf("chmod +x %s", installScriptTarget),
-		fmt.Sprintf("%s -s -i %s -V %s", installScriptTarget, ignitionTarget, cfg.Flatcar.Version),
+		fmt.Sprintf("%s -s -i %s -V %s %s", installScriptTarget, ignitionTarget, cfg.Flatcar.Version, cfg.Flatcar.InstallArgs),
 		"shutdown -r now",
 	}
 	for _, command := range commands {

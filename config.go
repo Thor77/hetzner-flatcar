@@ -18,6 +18,7 @@ type hcloudConfig struct {
 
 type flatcarConfig struct {
 	InstallScript   string `toml:"install_script"`
+	InstallArgs     string `toml:"install_args"`
 	Version         string
 	ConfigTemplate  string            `toml:"config_template"`
 	TemplateStatic  map[string]string `toml:"template_static"`
