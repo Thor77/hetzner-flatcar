@@ -396,7 +396,6 @@ func main() {
 		"apt install -y gawk",
 		fmt.Sprintf("chmod +x %s", installScriptTarget),
 		installCommand,
-		"systemctl reboot",
 	}
 	for _, command := range commands {
 		log.Printf("running command '%s'\n", command)
@@ -419,6 +418,16 @@ func main() {
 		if err != nil {
 			log.Fatalf("error running command '%s': %v\n", command, err)
 		}
+	}
+
+	// run reboot command
+	cmd, err := sshClient.Command("reboot now")
+	if err != nil {
+		log.Fatalf("error creating goph.Cmd for reboot command: %v\n", err)
+	}
+	err = cmd.Run()
+	if err != nil {
+		log.Printf("reboot command failed, VM probably rebooted anyways: %v\n", err)
 	}
 
 	log.Println("------")
