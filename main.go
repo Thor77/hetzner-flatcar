@@ -381,12 +381,21 @@ func main() {
 		log.Fatalf("error uploading ignition file: %v\n", err)
 	}
 
+	// build flatcar-install command
+	var installDeviceArg string
+	if cfg.Flatcar.InstallDevice == "" {
+		installDeviceArg = "-s"
+	} else {
+		installDeviceArg = fmt.Sprintf("-d %s", cfg.Flatcar.InstallDevice)
+	}
+	installCommand := fmt.Sprintf("%s -i %s -V %s %s %s", installScriptTarget, ignitionTarget, cfg.Flatcar.Version, installDeviceArg, cfg.Flatcar.InstallArgs)
+
 	// execute commands to finally install flatcar
 	commands := []string{
 		"apt update",
 		"apt install -y gawk",
 		fmt.Sprintf("chmod +x %s", installScriptTarget),
-		fmt.Sprintf("%s -s -i %s -V %s %s", installScriptTarget, ignitionTarget, cfg.Flatcar.Version, cfg.Flatcar.InstallArgs),
+		installCommand,
 		"shutdown -r now",
 	}
 	for _, command := range commands {
