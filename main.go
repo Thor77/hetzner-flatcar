@@ -396,7 +396,7 @@ func main() {
 		"apt install -y gawk",
 		fmt.Sprintf("chmod +x %s", installScriptTarget),
 		installCommand,
-		"shutdown -r +5s",
+		"systemctl reboot",
 	}
 	for _, command := range commands {
 		log.Printf("running command '%s'\n", command)
