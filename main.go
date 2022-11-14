@@ -210,6 +210,7 @@ func main() {
 	var templateContent []byte
 	if cfg.Flatcar.TemplateCommand == "" {
 		ignitionTemplate := cfg.Flatcar.ConfigTemplate
+		log.Printf("rendering ignition config using native template at %s\n", ignitionTemplate)
 		buffer := &bytes.Buffer{}
 		tmpl, err := template.New(filepath.Base(ignitionTemplate)).ParseFiles(ignitionTemplate)
 		if err != nil {
@@ -239,6 +240,8 @@ func main() {
 
 		templateContent, _ = ioutil.ReadAll(buffer)
 	} else {
+		log.Printf("rendering ignition config using command '%s'\n", cfg.Flatcar.TemplateCommand)
+
 		// marshal template data for passing it to the custom command
 		templateData := customTemplateData{
 			Hetzner: customTemplateDataHetzner{
