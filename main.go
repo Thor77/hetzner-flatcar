@@ -17,7 +17,7 @@ import (
 	"text/template"
 	"time"
 
-	clconfig "github.com/flatcar-linux/container-linux-config-transpiler/config"
+	clconfig "github.com/flatcar/container-linux-config-transpiler/config"
 	"github.com/hetznercloud/hcloud-go/hcloud"
 	"github.com/melbahja/goph"
 	"gopkg.in/yaml.v3"
