@@ -337,7 +337,14 @@ func main() {
 	var sshClient *goph.Client
 	for retries <= initialRetries {
 		// TODO: add option to enable host key checking, will be random, though because rescue always has a different hostkey
-		sshClient, err = goph.NewUnknown("root", server.PublicNet.IPv4.IP.String(), sshAuth)
+		var addr string
+		if ip := server.PublicNet.IPv4.IP; ip != nil {
+			addr = ip.String()
+		} else {
+			addr = fmt.Sprintf("%s2", server.PublicNet.IPv6.IP.String())
+		}
+		// rescue os always uses ::2
+		sshClient, err = goph.NewUnknown("root", addr, sshAuth)
 		if err == nil {
 			connectionSuccess = true
 			break
