@@ -1,5 +1,5 @@
 # hetzner-flatcar
-A tool to deploy [Flatcar Linux](https://flatcar.og) on Hetzner Cloud.
+A tool to deploy [Flatcar Linux](https://flatcar.org/) on [Hetzner Cloud](https://www.hetzner.com/cloud/).
 Includes transpiling of [Container Linux Config](https://www.flatcar.org/docs/latest/provisioning/cl-config/) and reinstalling maschines on changes.
 
 ## Build
