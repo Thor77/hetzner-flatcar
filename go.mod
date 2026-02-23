@@ -1,14 +1,12 @@
 module github.com/thor77/hetzner-flatcar
 
-go 1.21
-
-toolchain go1.23.4
+go 1.24.0
 
 require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/flatcar/container-linux-config-transpiler v0.9.4
 	github.com/hetznercloud/hcloud-go v1.59.2
-	github.com/melbahja/goph v1.4.0
+	github.com/melbahja/goph v1.5.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -24,16 +22,16 @@ require (
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/pkg/sftp v1.13.5 // indirect
+	github.com/pkg/sftp v1.13.10 // indirect
 	github.com/prometheus/client_golang v1.16.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/vincent-petithory/dataurl v1.0.0 // indirect
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/net v0.49.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )
