@@ -1,8 +1,6 @@
 module github.com/thor77/hetzner-flatcar
 
-go 1.21
-
-toolchain go1.23.4
+go 1.24.0
 
 require (
 	github.com/BurntSushi/toml v1.4.0
@@ -31,9 +29,9 @@ require (
 	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/vincent-petithory/dataurl v1.0.0 // indirect
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )
