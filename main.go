@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -221,7 +221,7 @@ func main() {
 			SSHKey: *sshKey,
 			Static: cfg.Flatcar.TemplateStatic,
 			ReadFile: func(filename string) (string, error) {
-				content, err := ioutil.ReadFile(filename)
+				content, err := os.ReadFile(filename)
 				return string(content), err
 			},
 			Indent: func(indent int, input string) string {
@@ -238,7 +238,7 @@ func main() {
 			log.Fatalf("error rendering template: %v\n", err)
 		}
 
-		templateContent, _ = ioutil.ReadAll(buffer)
+		templateContent, _ = io.ReadAll(buffer)
 	} else {
 		log.Printf("rendering ignition config using command '%s'\n", cfg.Flatcar.TemplateCommand)
 
