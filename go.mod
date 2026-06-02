@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/flatcar/container-linux-config-transpiler v0.9.4
 	github.com/hetznercloud/hcloud-go v1.59.2
-	github.com/melbahja/goph v1.5.0
+	github.com/melbahja/goph v1.5.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
